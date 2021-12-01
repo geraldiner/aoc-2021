@@ -35,9 +35,12 @@ function countIncreases(input) {
 	let fileStr = ""
 	for (let i = 1; i < input.length; i++) {
 		let curr = input[i];
-		fileStr += `${prev} | ${curr} | curr > prev: ${(curr > prev)}\n`
+		fileStr += `${prev} | ${curr} | curr > prev: ${(curr > prev)}`
 		if (curr > prev) {
+			fileStr += " (increased)\n";
 			increases += 1;
+		} else {
+			fileStr += " (decreased)\n";
 		}
 		prev = curr;
 	}
