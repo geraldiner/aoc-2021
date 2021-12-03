@@ -31,6 +31,25 @@
  * The epsilon rate is calculated in a similar way; rather than use the most common bit, the least common bit from each position is used. So, the epsilon rate is 01001, or 9 in decimal. Multiplying the gamma rate (22) by the epsilon rate (9) produces the power consumption, 198.
  */
 
+const fs = require("fs");
+
+/**
+ * Helper function to read the input file contents and send back as an array of strings
+ * @param: filename - string name of the input file
+ * @return: array - contents of file
+ */
+function readInputFile(filename) {
+	let fileString = fs.readFileSync(`./day03/${filename}`, 'utf8');
+  let contents = fileString.split("\n");
+	return contents;
+}
+
+/**
+ * Parse the puzzle input to get the gamma rate and episolon rate based on the decoding instructions
+ * 
+ * @param: input - each line of the input is an item in an array
+ * @return: rates - object that holds the gammaRate and epsilonRate
+ */
 function parseForRates(input) {
 	// take the columns of the input
 	// find the most common number (1 or 0) = gamma rate (binary)
@@ -45,16 +64,90 @@ function parseForRates(input) {
 	// nested for loop
 	// every ith character in an array - filter for what has more
 	// the most common is the ith bit of the gammaRate, the other is the ith bit of the epsilonRate
-	for (chunk of input) {
-		console.log(chunk);
+	const chunkLength = input[0].length
+	for (let i = 0; i < chunkLength; i++) {
+		let nums = []
+		for (chunk of input) {
+			nums.push(chunk[i])
+		}
+		// filter for the most common - 
+		let zeros = nums.filter(x => x === "0").length;
+		let ones = nums.filter(x => x === "1").length
+		let mostCommon = "";
+		let leastCommon = "";
+		if (zeros > ones) {
+			mostCommon = "0";
+			leastCommon = "1";
+		} else {
+			mostCommon = "1";
+			leastCommon = "0";
+		}
+		rates.gammaRate += mostCommon;
+		rates.epsilonRate += leastCommon;
 	}
 	return rates;
 }
 
-let exampleInput =  ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"];
-let exampleRates = {
+/**
+ * Convert the rates from binary to decimal
+ * 
+ * @param: rates - object holding gammaRate and epsilonRate
+ * @return: decimalRates - object holding the two given rates as decimal numbers
+ */
+function convertToDecimal(rates) {
+	let decimalRates = {
+		gammaDecimal: parseInt(rates.gammaRate, 2),
+		epsilonDecimal: parseInt(rates.epsilonRate, 2)
+	}
+	return decimalRates;
+}
+
+/**
+ * Solve puzzle by multiplying the decimal numbers of the gammaRate and epsilonRate
+ * 
+ * @param: decimalRates - object holding the two given rates as decimal numbers
+ * @return: result - number answer by multiplying the gammaRate and epsilonRate
+ */
+
+function solvePuzzle(decimalRates) {
+	return decimalRates.gammaDecimal * decimalRates.epsilonDecimal;
+}
+
+function main() {
+	const fileContents = readInputFile("input.txt");
+
+	/* PART 1 */
+	const rates = parseForRates(fileContents);
+	console.log("RATES: ", rates);
+	const decimalRates = convertToDecimal(rates);
+	console.log("DECIMAL: ", decimalRates);
+	const result = solvePuzzle(decimalRates);
+	console.log("RESULT: ", result);
+
+	/* PART 2 */
+
+}
+
+
+const exampleInput =  ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"];
+const exampleRates = {
 	gammaRate: "10110", 
 	epsilonRate: "01001"
 }
+const exampleDecimal = {
+	gammaDecimal: 22,
+	epsilonDecimal: 9
+}
+const exampleResult = 198
 
-console.log(parseForRates(exampleInput), "should equal: ", exampleRates);
+const testRates = {
+	gammaRate: "101100100100",
+	epsilonRate: "010011011011"
+}
+const testDecimal = {
+	gammaDecimal: 2852,
+	epsilonDecimal: 1243
+}
+const testResult = 3545036
+
+main();
