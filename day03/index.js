@@ -57,8 +57,8 @@ function parseForRates(input) {
 	// convert the binary numbers to decimal
 	// multiply the rates
 	let rates = {
-		gammaRate: "",
-		epsilonRate: ""
+		first: "",
+		second: ""
 	}
 
 	// nested for loop
@@ -82,8 +82,8 @@ function parseForRates(input) {
 			mostCommon = "1";
 			leastCommon = "0";
 		}
-		rates.gammaRate += mostCommon;
-		rates.epsilonRate += leastCommon;
+		rates.first += mostCommon;
+		rates.second += leastCommon;
 	}
 	return rates;
 }
@@ -95,11 +95,11 @@ function parseForRates(input) {
  * @return: decimalRates - object holding the two given rates as decimal numbers
  */
 function convertToDecimal(rates) {
-	let decimalRates = {
-		gammaDecimal: parseInt(rates.gammaRate, 2),
-		epsilonDecimal: parseInt(rates.epsilonRate, 2)
+	let decimals = {
+		first: parseInt(rates.first, 2),
+		second: parseInt(rates.second, 2)
 	}
-	return decimalRates;
+	return decimals;
 }
 
 /**
@@ -110,13 +110,84 @@ function convertToDecimal(rates) {
  */
 
 function solvePuzzle(decimalRates) {
-	return decimalRates.gammaDecimal * decimalRates.epsilonDecimal;
+	return decimalRates.first * decimalRates.second;
+}
+
+/** PART 2
+ * Use the binary numbers in your diagnostic report to calculate the oxygen generator rating and CO2 scrubber rating, then multiply them together. What is the life support rating of the submarine? (Be sure to represent your answer in decimal, not binary.)
+ * 
+ * See explanation: https://adventofcode.com/2021/day/3#part2
+ */
+
+function parseLifeSupport(input) {
+	let ratings = {
+		first: "",
+		second: ""
+	}
+	// look at the ith character of the chunk
+	// determine which is most common, 1 or 0
+	// keep only the chunks that have the most common in the ith position
+	// when there is only one chunk left, STOP - this is the oxygenRating
+	// if there is a tie between the last 2, keep the one with the 1
+	// for co2Rating - keep the least common in the ith position
+	// if there is a tie between the last 2, keep the one with the 0
+	let oxygenChunks = [...input]
+	let co2Chunks = [...input]
+	const chunkLength = input[0].length
+	for (let i = 0; i < chunkLength; i++) {
+		let oxygenNums = []
+		for (chunk of oxygenChunks) {
+			oxygenNums.push(chunk[i])
+		}
+		// filter for the most common - 
+		let oxygenZeros = oxygenNums.filter(x => x === "0").length;
+		let oxygenOnes = oxygenNums.filter(x => x === "1").length
+		if (oxygenOnes >= oxygenZeros) {
+			if (oxygenChunks.length === 1) {
+				oxygenChunks = oxygenChunks
+			} else {
+				oxygenChunks = oxygenChunks.filter(x => x[i] === "1") 
+			}
+		} else {
+			if (oxygenChunks.length === 1) {
+				oxygenChunks = oxygenChunks
+			} else {
+				oxygenChunks = oxygenChunks.filter(x => x[i] === "0") 
+			}
+		}
+
+		let co2NUms = []
+		for (chunk of co2Chunks) {
+			co2NUms.push(chunk[i])
+		}
+		// filter for the most common - 
+		let co2Zeros = co2NUms.filter(x => x === "0").length;
+		let co2Ones = co2NUms.filter(x => x === "1").length
+		if (co2Zeros <= co2Ones) {
+			if (co2Chunks.length === 1) {
+				co2Chunks = co2Chunks
+			} else {
+				co2Chunks = co2Chunks.filter(x => x[i] === "0") 
+			}
+		} else {
+			if (co2Chunks.length === 1) {
+				co2Chunks = co2Chunks
+			} else {
+				co2Chunks = co2Chunks.filter(x => x[i] === "1") 
+			}
+		}
+		console.log({oxygenChunks, co2Chunks})
+	}
+	ratings.first = oxygenChunks[0]
+	ratings.second = co2Chunks[0]
+	return ratings
 }
 
 function main() {
 	const fileContents = readInputFile("input.txt");
 
 	/* PART 1 */
+	console.log("-----PART 1-----")
 	const rates = parseForRates(fileContents);
 	console.log("RATES: ", rates);
 	const decimalRates = convertToDecimal(rates);
@@ -125,10 +196,16 @@ function main() {
 	console.log("RESULT: ", result);
 
 	/* PART 2 */
-
+	console.log("\n-----PART 2-----")
+	const ratings = parseLifeSupport(fileContents)
+	console.log("RATINGS: ", ratings, " | ", testRatings);
+	const decimalRatings = convertToDecimal(ratings)
+	console.log("DECIMAL: ", decimalRatings, " | ", testRatingDecimals);
+	const ratingResult = solvePuzzle(decimalRatings)
+	console.log("RESULT: ", ratingResult, " | ", testRatingResult);
 }
 
-
+/* PART 1 */
 const exampleInput =  ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"];
 const exampleRates = {
 	gammaRate: "10110", 
@@ -149,5 +226,42 @@ const testDecimal = {
 	epsilonDecimal: 1243
 }
 const testResult = 3545036
+
+/* PART 2 */
+const exampleRatings = {
+	oxygenRating: "10111",
+	co2Rating: "01010"
+}
+const exampleRatingDecimals = {
+	oxygenDecimal: 23,
+	co2Decimal: 10
+}
+const exampleRatingResult = 230
+
+// const testRatings = {
+// 	oxygenRating: "101100110001",
+// 	co2Rating: "001101100010"
+// }
+
+// const testRatingDecimals = {
+// 	oxygenDecimal: 2865,
+// 	co2Decimal: 866
+// }
+
+// const testRatingResult = 2481090
+
+
+const testRatings = {
+	oxygenRating: "111100111010",
+	co2Rating: "010111011110"
+}
+
+const testRatingDecimals = {
+	oxygenDecimal: 3898,
+	co2Decimal: 1502
+}
+
+const testRatingResult = 5854796
+
 
 main();
