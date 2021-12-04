@@ -48,7 +48,6 @@ function parseFileForInfo(contents) {
 		}
 		game.bingoCards.push(bingoCard);
 	}
-	console.log(game.bingoCards.length)
 	return game;
 }
 
@@ -58,22 +57,18 @@ function findWinningCard(game) {
 	//  bingoCard wins when one of the vBingos or hBingos has all its numbers called
 	let winningCard = null;
 	let i = 0;
-	let str = "";
 	while (winningCard === null) {
 		let calledNumber = drawnNumbers[i];
 		bingoCards = removeCalledNumber(bingoCards, calledNumber);
-		str += "---------------------\n"
-		str += `\nCALLED NUMBER: ${calledNumber}\n`
 		for (bingoCard of bingoCards) {
-			const {card,vBingos,hBingos} = bingoCard;
-			str += `${JSON.stringify({card,vBingos,hBingos})}\n\n`
+			let winCard = checkForWinner(bingoCard);
+			if (winCard) {
+				winningCard = winCard;
+				winningNumber = calledNumber;
+			}
 		}
-		str += "---------------------\n"
-		winningCard = checkForWinner(bingoCards);
-		if (winningCard) winningNumber = calledNumber;
 		i++;
 	}
-	fs.writeFileSync("./day04/output.txt", str, "utf8");
 	return {winningNumber, winningCard}
 }
 
@@ -89,15 +84,14 @@ function removeCalledNumber(bingoCards, calledNumber) {
 	return newBingoCards;
 }
 
-function checkForWinner(bingoCards) {
-	for (bingoCard of bingoCards) {
-		let {card, hBingos, vBingos} = bingoCard;
-		for (let i = 0; i < hBingos.length; i++) {
-			if (hBingos[i].length === 0 || vBingos[i].length === 0) {
-				return bingoCard;
-			}
+function checkForWinner(bingoCard) {
+	let {card, hBingos, vBingos} = bingoCard;
+	for (let i = 0; i < hBingos.length; i++) {
+		if (hBingos[i].length === 0 || vBingos[i].length === 0) {
+			return bingoCard;
 		}
 	}
+	
 	return null;
 }
 
@@ -110,8 +104,33 @@ function calculateScore(winner) {
 }
 
 /** PART 2
+ * See info: https://adventofcode.com/2021/day/4#part2
  * 
+ * Let the squid win - figure out which card wins last
  */
+
+function findLastWinningCard(game) {
+	let { drawnNumbers, bingoCards } = game;
+	let winningNumber = null;
+	let i = 0;
+	let winningCards = [];
+	let maxWinners = bingoCards.length;
+	while (winningCards.length !== maxWinners) {
+		let calledNumber = drawnNumbers[i];
+		bingoCards = removeCalledNumber(bingoCards, calledNumber);
+		for (bingoCard of bingoCards) {
+			let winCard = checkForWinner(bingoCard);
+			if (winCard) {
+				winningCards.push(winCard);
+				bingoCards = bingoCards.filter(x => x !== winCard);
+			}
+		}
+		if (winningCards.length === maxWinners) winningNumber = calledNumber;
+		i++;
+	}
+	let winningCard = winningCards[winningCards.length-1]
+	return {winningNumber, winningCard}
+}
 
 function main() {
 	const fileContents = readInputFile("input.txt");
@@ -120,13 +139,15 @@ function main() {
 	console.log("-----PART 1-----")
 	const game = parseFileForInfo(fileContents);
 	const winner = findWinningCard(game);
-	console.log({winner})
 	const score = calculateScore(winner);
 	console.log({score});
 
 	/* PART 2 */
 	console.log("\n-----PART 2-----")
-
+	const game2 = parseFileForInfo(fileContents);
+	const lastWinner = findLastWinningCard(game2);
+	const lastWinnerScore = calculateScore(lastWinner);
+	console.log({lastWinnerScore})
 }
 
 main();
