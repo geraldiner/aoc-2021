@@ -18,6 +18,15 @@ function readInputFile(filename) {
 	return contents;
 }
 
+/**
+ * Parses the input file to set up the game state:
+ * The first line is the order the numbers are drawn
+ * The lines that follow are the bingo cards - which get saved as an object holding information about all the numbers on the card, a list of all the horizontal bingos, and a list of all the vertical bingos.
+ * Then it returns the game state
+ * 
+ * @params: contents - file contents from input file
+ * @return: game - object that holds information about the game
+ */
 function parseFileForInfo(contents) {
 	let game = {
 		drawnNumbers: contents[0].split(","),
@@ -51,6 +60,14 @@ function parseFileForInfo(contents) {
 	return game;
 }
 
+/**
+ * Finds the first winning bingo card and returns it in its current state (called numbers removed from the card, all horizontal bingos, and all vertical bingos). It will also return the winning number that triggered the win.
+ * 
+ * @params: game - the game state as parsed from the input
+ * @return: {winningCard, winningNumber} - separate variables returned as an object for easy destructuring
+ * winningCard - an object holding information about the first card that gets bingo
+ * winningNumber - the number that triggers the first bingo win
+ */
 function findWinningCard(game) {
 	let { drawnNumbers, bingoCards } = game;
 	let winningNumber = null;
@@ -72,6 +89,13 @@ function findWinningCard(game) {
 	return {winningNumber, winningCard}
 }
 
+/**
+ * Helper function to remove the called number from all the bingo cards (and the horizontal, vertical bingos associated with that card). It returns the updated bingo cards.
+ * 
+ * @param: bingoCards - all the bingo cards in the game
+ * @param: calledNumber - the number that was called
+ * @return: newBingoCards - updated bingo cards with the called number removed
+ */
 function removeCalledNumber(bingoCards, calledNumber) {
 	let newBingoCards = [];
 	for (bingoCard of bingoCards) {
@@ -84,6 +108,12 @@ function removeCalledNumber(bingoCards, calledNumber) {
 	return newBingoCards;
 }
 
+/**
+ * Checks if a bingo card is a winner, which means that either a horizontal bingo list or vertical bingo list is empty (due to the removal of called numbers). If it is a winning card, returns the card. Otherwise, returns null.
+ * 
+ * @param: bingoCard - the bingo card being checked
+ * @return: bingoCard/null - will return the bingoCard if it's a winner, otherwise null
+ */
 function checkForWinner(bingoCard) {
 	let {card, hBingos, vBingos} = bingoCard;
 	for (let i = 0; i < hBingos.length; i++) {
@@ -95,6 +125,12 @@ function checkForWinner(bingoCard) {
 	return null;
 }
 
+/**
+ * Calculates the score to solve the puzzle. Takes the remaining unmarked numbers and sums them. Then multiplies that sum by the number that triggered the win.
+ * 
+ * @param: winner - object that holds the winning card and winning number
+ * @return: result - the result of the calculations described
+ */
 function calculateScore(winner) {
 	// sum of all unmarked numbers
 	// multiply sum by the number that was called
@@ -109,6 +145,14 @@ function calculateScore(winner) {
  * Let the squid win - figure out which card wins last
  */
 
+/**
+ * Finds the last winning card, meaning the 100th (or however many cards were in the input) winning card. So it will keep finding winning cards until it reaches the last one. Then it will return that last winning card and the number that triggered the win
+ * 
+ * @params: game - the game state as parsed from the input
+ * @return: {winningCard, winningNumber} - separate variables returned as an object for easy destructuring
+ * winningCard - an object holding information about the last card that gets bingo
+ * winningNumber - the number that triggers the last bingo win
+ */
 function findLastWinningCard(game) {
 	let { drawnNumbers, bingoCards } = game;
 	let winningNumber = null;
@@ -129,7 +173,7 @@ function findLastWinningCard(game) {
 		i++;
 	}
 	let winningCard = winningCards[winningCards.length-1]
-	return {winningNumber, winningCard}
+	return {winningCard, winningNumber}
 }
 
 function main() {
