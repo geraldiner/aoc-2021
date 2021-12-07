@@ -13,23 +13,49 @@ const fs = require("fs");
  */
 function readInputFile(filename) {
 	let fileString = fs.readFileSync(`./day06/${filename}`, 'utf8');
-  let contents = fileString.split(",");
+  let contents = fileString.split(",").map(x => parseInt(x));
 	return contents;
 }
 
 function countFishAfterDays(input, numOfDays) {
-	console.log({input,numOfDays})
 	let count = 0;
-	return count;
+	// forloop over numOfDays and update the numbers according to the instructions
+	let totalFish = input;
+	let prevFish = [];
+	for (let i = 1; i <= numOfDays; i++) {
+		prevFish = [...totalFish];
+		for (let j = 0; j < totalFish.length; j++) {
+			let fish = totalFish[j];
+			totalFish[j] = fish === 0 ? 6 : fish-1;
+		}
+		if (i > 1) {
+			let zeros = prevFish.filter(x => x === 0);
+			for (let j = 0; j < zeros.length; j++) {
+				totalFish.push(8);
+			}
+		}
+	}
+	
+	return totalFish.length;
 }
 
+/** PART 2
+ * See info: https://adventofcode.com/2021/day/6#part2
+ * 
+ * Suppose the lanternfish live forever and have unlimited food and space. Would they take over the entire ocean?
+ * 
+ * After 256 days in the example above, there would be a total of 26984457539 lanternfish!
+ * 
+ * How many lanternfish would there be after 256 days?
+ */
+
 function main() {
-	const fileContents = readInputFile("example.txt");
+	const fileContents = readInputFile("input.txt");
 
 
 	/* PART 1 */
 	console.log("-----PART 1-----")
-	const solution = countFishAfterDays(fileContents, 80);
+	const solution = countFishAfterDays(fileContents, 256);
 	console.log({solution});
 
 	/* PART 2 */
