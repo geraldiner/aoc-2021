@@ -40,41 +40,42 @@ function findBestFuelSolution(input) {
 
 	}
 	return {bestSolution, bestSolutionFuel}
+}
 
-	/*
-	var positions = new list<int>
+function findBestFuelSolution2(input) {
+	const positions = [...input];
 
-	var minPos = positions.Min();
-	var maxPos = position.Max();
+	let minPos = Math.min(...positions);
+	let maxPos = Math.max(...positions);
 
-	var bestSolution = -1;
-	var bestSolutionFuel = Int.Max();
+	let bestSolution = -1;
+	let bestSolutionFuel = 99999999999;
 
-	for(var i = minPos; i <= maxPos; i++) {
-		var fuelUsed = 0;
-		foreach(var pos in positions) {
-				var fuelUsedForThisCrab = Math.Abs(pos - i);
-				fuelUsed+=fuelUsedForThisCrab;
+	for (let i = minPos; i <= maxPos; i++) {
+		let fuelUsed = 0;
+		for (let pos of positions) {
+			let fuelUsedForThisCrab = getFuelUsed(Math.abs(pos - i));
+			fuelUsed += fuelUsedForThisCrab;
 		}
-		if(fuelUsed < bestSolutionFuel) {
+		if (fuelUsed < bestSolutionFuel) {
 			bestSolutionFuel = fuelUsed;
 			bestSolution = i;
 		}
+
 	}
-	Console.WriteLine($"The best spot to gather is {bestSolution}, it will use {bestSolutionFuel} fuel");
-	*/	
+	return {bestSolution, bestSolutionFuel}
 }
 
-function findFuelUsed(crabPositions) {
-	const {maxCrabPosition, crabs} = crabPositions;
-	const fuelUsed = crabs.reduce((acc,curr) => {
-		return acc+Math.abs(curr-maxCrabPosition);
-	}, 0);
-	return fuelUsed;
+function getFuelUsed(steps) {
+	let sum = 0;
+	for (let i = 1; i <= steps; i++) {
+		sum += i;
+	}
+	return sum;
 }
 
 function main() {
-	const fileContents = readInputFile("input.txt");
+	const fileContents = readInputFile("example.txt");
 
 
 	/* PART 1 */
@@ -84,14 +85,11 @@ function main() {
 
 	/* PART 2 */
 	console.log("\n-----PART 2-----")
-
+	const solution2 = findBestFuelSolution2(fileContents);
+	console.log({solution2});
 }
 
 main();
-
-
-
-
 
 
 /*
