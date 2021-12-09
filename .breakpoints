@@ -7,6 +7,14 @@
         "version": 10003,
         "index": 0
       }
+    ],
+    "day08/index.js": [
+      {
+        "id": "953a9a9f-fc72-4c15-91c3-d607bc78ea10",
+        "line": 175,
+        "version": 14033,
+        "index": 5992
+      }
     ]
   }
 }
