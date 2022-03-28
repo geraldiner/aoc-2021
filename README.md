@@ -4,6 +4,7 @@ Advent of Code 2021 puzzles and (attempted) solutions. From: https://adventofcod
 
 
 
+
 ## Other Projects
 
 Check out other stuff I've worked on:
