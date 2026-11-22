@@ -1,19 +1,6 @@
 ## About
 
 Advent of Code 2021 puzzles and (attempted) solutions. From: https://adventofcode.com/2021
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 🚀 Other Projects
 
 Check out other stuff I've worked on:
